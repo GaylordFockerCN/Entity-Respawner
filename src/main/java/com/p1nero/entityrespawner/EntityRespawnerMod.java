@@ -7,6 +7,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -19,13 +21,15 @@ public class EntityRespawnerMod {
 
     public EntityRespawnerMod(FMLJavaModLoadingContext context) {
         EntityRespawnerEntities.REGISTRY.register(context.getModEventBus());
-        MinecraftForge.EVENT_BUS.addListener(this::onLivingDeath);
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.LOWEST, this::onLivingDeath);
         MinecraftForge.EVENT_BUS.addListener(this::onLivingJoin);
         context.registerConfig(ModConfig.Type.COMMON, EntityRespawnerConfig.SPEC);
     }
 
     private void onLivingDeath(LivingDeathEvent event) {
-        addToRespawn(event.getEntity());
+        if(!event.isCanceled()) {
+            addToRespawn(event.getEntity());
+        }
     }
 
     private void onLivingJoin(EntityJoinLevelEvent event) {
