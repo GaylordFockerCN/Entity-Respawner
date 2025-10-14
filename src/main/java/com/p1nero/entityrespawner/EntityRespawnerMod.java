@@ -28,7 +28,9 @@ public class EntityRespawnerMod {
 
     private void onLivingDeath(LivingDeathEvent event) {
         if(!event.isCanceled()) {
-            addToRespawn(event.getEntity());
+            if(EntityRespawnerConfig.entities.contains(event.getEntity().getType())){
+                addToRespawn(event.getEntity());
+            }
         }
     }
 
@@ -52,7 +54,7 @@ public class EntityRespawnerMod {
         if(living.getPersistentData().getBoolean(MOD_ID + "mark")) {
             return null;
         }
-        if(living.level() instanceof ServerLevel serverLevel && EntityRespawnerConfig.entities.contains(living.getType())) {
+        if(living.level() instanceof ServerLevel serverLevel) {
             SoulEntity soulEntity = new SoulEntity(serverLevel, timer, living);
             soulEntity.setUseSoulEffect(soulEffect);
             if(serverLevel.addFreshEntity(soulEntity)){
