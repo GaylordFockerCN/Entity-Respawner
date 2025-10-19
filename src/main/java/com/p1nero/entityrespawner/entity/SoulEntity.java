@@ -141,4 +141,11 @@ public class SoulEntity extends Entity {
 
     }
 
+    @Override
+    public void remove(@NotNull RemovalReason reason) {
+        if(reason == RemovalReason.UNLOADED_TO_CHUNK || reason == RemovalReason.UNLOADED_WITH_PLAYER) {
+            return;
+        }
+        super.remove(reason);
+    }
 }
