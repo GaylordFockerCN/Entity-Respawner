@@ -1,6 +1,6 @@
 package com.p1nero.entityrespawner.entity;
 
-import com.p1nero.entityrespawner.EntityRespawnerConfig;
+import com.p1nero.entityrespawner.data.RespawnableEntityManager;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -11,7 +11,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
@@ -25,13 +24,17 @@ public class SoulEntity extends Entity {
 
     private boolean soulEffect;
 
+    private boolean respawnWhenLoadFromDisk;
+
+    private CompoundTag entityToRespawnData;
+
     public SoulEntity(EntityType<?> entityType, Level level) {
         super(entityType, level);
         noPhysics = true;
     }
 
     public SoulEntity(Level level, int timer, Entity original) {
-        super(EntityRespawnerEntities.SOUL_ENTITY.get(), level);
+        this(EntityRespawnerEntities.SOUL_ENTITY.get(), level);
         this.setTimer(timer);
         this.setEntityToRespawn(original.getType());
         this.setPos(original.position().add(0, 1, 0));
@@ -59,16 +62,39 @@ public class SoulEntity extends Entity {
         String entityType = tag.getString("entity_type");
         this.setTimer(timer);
         this.setEntityToRespawn(entityType);
+        this.setRespawnWhenLoadFromDisk(tag.getBoolean("respawnWhenLoadFromDisk"));
+        this.entityToRespawnData = tag.getCompound("entityToRespawnData");
     }
 
     @Override
     protected void addAdditionalSaveData(@NotNull CompoundTag tag) {
         tag.putString("entity_type", this.getEntityToRespawnId());
         tag.putInt("timer", this.getTimer());
+        if(this.entityToRespawnData != null) {
+            tag.put("entityToRespawnData", this.entityToRespawnData);
+        }
+        tag.putBoolean("respawnWhenLoadFromDisk", this.respawnWhenLoadFromDisk);
     }
 
     public void enableSoulEffect() {
         this.soulEffect = true;
+    }
+
+    public void setRespawnWhenLoadFromDisk(boolean respawnWhenLoadFromDisk) {
+        this.respawnWhenLoadFromDisk = respawnWhenLoadFromDisk;
+    }
+
+    public boolean shouldRespawnWhenLoadFromDisk() {
+        return this.respawnWhenLoadFromDisk;
+    }
+
+    public void setEntityToRespawnData(CompoundTag entityData) {
+        this.entityToRespawnData = entityData;
+    }
+
+    @Nullable
+    public CompoundTag getEntityToRespawnData() {
+        return entityToRespawnData;
     }
 
     public void setUseSoulEffect(boolean soulEffect) {
@@ -130,14 +156,20 @@ public class SoulEntity extends Entity {
     public void respawnEntity(ServerLevel serverLevel) {
         EntityType<?> entityType = this.getEntityToRespawn();
         if (entityType != null) {
-            if (entityType.spawn(serverLevel, this.getOnPos(), MobSpawnType.MOB_SUMMONED) != null) {
-                onSpawnSuccess();
+            Entity toRespawn = entityType.create(serverLevel);
+            if (toRespawn != null) {
+                toRespawn.setPos(this.position());
+                if(this.entityToRespawnData != null) {
+                    toRespawn.load(this.entityToRespawnData);
+                }
+                serverLevel.addFreshEntityWithPassengers(toRespawn);
+                onSpawnSuccess(toRespawn);
             }
             discard();
         }
     }
 
-    public void onSpawnSuccess() {
+    public void onSpawnSuccess(Entity toRespawn) {
 
     }
 

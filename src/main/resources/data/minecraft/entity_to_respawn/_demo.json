@@ -1,0 +1,11 @@
+{
+  "respawn_timer": 100,
+  "respawn_when_reload_from_disk": true,
+  "soul_effect": true,
+  "broadcast": true,
+  "keep_nbt": true,
+  "pos_override": [0, 100, 0],
+  "nbt_override": {
+
+  }
+}
