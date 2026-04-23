@@ -60,7 +60,7 @@ public class EntityRespawnerMod {
     }
 
     @Nullable
-    public static SoulEntity createSoulEntity(LivingEntity living, int timer, boolean soulEffect, boolean keepNbt) {
+    public static SoulEntity createSoulEntity(LivingEntity living, int timer, boolean soulEffect) {
         if(living.level() instanceof ServerLevel serverLevel) {
             SoulEntity soulEntity = new SoulEntity(serverLevel, timer, living);
             soulEntity.setUseSoulEffect(soulEffect);
