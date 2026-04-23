@@ -1,6 +1,5 @@
 package com.p1nero.entityrespawner.entity;
 
-import com.p1nero.entityrespawner.data.RespawnableEntityManager;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -64,6 +63,7 @@ public class SoulEntity extends Entity {
         this.setEntityToRespawn(entityType);
         this.setRespawnWhenLoadFromDisk(tag.getBoolean("respawnWhenLoadFromDisk"));
         this.entityToRespawnData = tag.getCompound("entityToRespawnData");
+        this.soulEffect = tag.getBoolean("soulEffect");
     }
 
     @Override
@@ -74,6 +74,7 @@ public class SoulEntity extends Entity {
             tag.put("entityToRespawnData", this.entityToRespawnData);
         }
         tag.putBoolean("respawnWhenLoadFromDisk", this.respawnWhenLoadFromDisk);
+        tag.putBoolean("soulEffect", this.soulEffect);
     }
 
     public void enableSoulEffect() {
