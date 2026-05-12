@@ -17,6 +17,8 @@ import org.jetbrains.annotations.Nullable;
 
 public class SoulEntity extends Entity {
 
+    public static final String TAG = "create-from-soul-entity";
+
     protected static final EntityDataAccessor<String> ENTITY_TO_RESPAWN_ID = SynchedEntityData.defineId(SoulEntity.class, EntityDataSerializers.STRING);
 
     protected static final EntityDataAccessor<Integer> TIMER = SynchedEntityData.defineId(SoulEntity.class, EntityDataSerializers.INT);
@@ -70,7 +72,7 @@ public class SoulEntity extends Entity {
     protected void addAdditionalSaveData(@NotNull CompoundTag tag) {
         tag.putString("entity_type", this.getEntityToRespawnId());
         tag.putInt("timer", this.getTimer());
-        if(this.entityToRespawnData != null) {
+        if(this.entityToRespawnData != null && !this.entityToRespawnData.isEmpty()) {
             tag.put("entityToRespawnData", this.entityToRespawnData);
         }
         tag.putBoolean("respawnWhenLoadFromDisk", this.respawnWhenLoadFromDisk);
@@ -160,9 +162,10 @@ public class SoulEntity extends Entity {
             Entity toRespawn = entityType.create(serverLevel);
             if (toRespawn != null) {
                 toRespawn.setPos(this.position());
-                if(this.entityToRespawnData != null) {
+                if(this.entityToRespawnData != null && !this.entityToRespawnData.isEmpty()) {
                     toRespawn.load(this.entityToRespawnData);
                 }
+                toRespawn.getTags().add(TAG);
                 serverLevel.addFreshEntityWithPassengers(toRespawn);
                 onSpawnSuccess(toRespawn);
             }
@@ -181,4 +184,5 @@ public class SoulEntity extends Entity {
         }
         super.remove(reason);
     }
+
 }
