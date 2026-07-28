@@ -2,7 +2,7 @@
   "required": true,
   "minVersion": "0.8",
   "package": "com.p1nero.entityrespawner.mixin",
-  "compatibilityLevel": "JAVA_8",
+  "compatibilityLevel": "JAVA_21",
   "refmap": "entityrespawner.refmap.json",
   "mixins": [
   ],

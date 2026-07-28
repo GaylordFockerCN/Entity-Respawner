@@ -1,5 +1,6 @@
 package com.p1nero.entityrespawner.entity;
 
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -11,7 +12,6 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -52,9 +52,9 @@ public class SoulEntity extends Entity {
     }
 
     @Override
-    protected void defineSynchedData() {
-        this.getEntityData().define(ENTITY_TO_RESPAWN_ID, "");
-        this.getEntityData().define(TIMER, 0);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        builder.define(ENTITY_TO_RESPAWN_ID, "");
+        builder.define(TIMER, 0);
     }
 
     @Override
@@ -117,7 +117,7 @@ public class SoulEntity extends Entity {
     }
 
     public void setEntityToRespawn(EntityType<?> entityType) {
-        ResourceLocation resourceLocation = ForgeRegistries.ENTITY_TYPES.getKey(entityType);
+        ResourceLocation resourceLocation = BuiltInRegistries.ENTITY_TYPE.getKey(entityType);
         if (resourceLocation != null) {
             setEntityToRespawn(resourceLocation.toString());
         }
@@ -130,7 +130,7 @@ public class SoulEntity extends Entity {
     @Nullable
     public EntityType<?> getEntityToRespawn() {
         ResourceLocation resourceLocation = ResourceLocation.parse(this.getEntityToRespawnId());
-        return ForgeRegistries.ENTITY_TYPES.getValue(resourceLocation);
+        return BuiltInRegistries.ENTITY_TYPE.get(resourceLocation);
     }
 
     @Override

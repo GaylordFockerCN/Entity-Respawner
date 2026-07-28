@@ -5,13 +5,13 @@ import com.p1nero.entityrespawner.entity.EntityRespawnerEntities;
 import com.p1nero.entityrespawner.entity.SoulEntity;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.AddReloadListenerEvent;
-import net.minecraftforge.event.entity.EntityJoinLevelEvent;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.bus.api.EventPriority;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.AddReloadListenerEvent;
+import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
+import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import org.jetbrains.annotations.Nullable;
 
 @Mod(EntityRespawnerMod.MOD_ID)
@@ -19,11 +19,11 @@ public class EntityRespawnerMod {
 
     public static final String MOD_ID = "entityrespawner";
 
-    public EntityRespawnerMod(FMLJavaModLoadingContext context) {
-        EntityRespawnerEntities.REGISTRY.register(context.getModEventBus());
-        MinecraftForge.EVENT_BUS.addListener(EventPriority.LOWEST, this::onLivingDeath);
-        MinecraftForge.EVENT_BUS.addListener(this::onLivingJoin);
-        MinecraftForge.EVENT_BUS.addListener(this::onAddReloadListener);
+    public EntityRespawnerMod(IEventBus modEventBus) {
+        EntityRespawnerEntities.REGISTRY.register(modEventBus);
+        NeoForge.EVENT_BUS.addListener(EventPriority.LOWEST, this::onLivingDeath);
+        NeoForge.EVENT_BUS.addListener(this::onLivingJoin);
+        NeoForge.EVENT_BUS.addListener(this::onAddReloadListener);
     }
 
     private void onLivingDeath(LivingDeathEvent event) {

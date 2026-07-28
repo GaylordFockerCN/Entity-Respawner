@@ -14,6 +14,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -22,7 +23,6 @@ import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
@@ -134,7 +134,7 @@ public class RespawnableEntityManager extends SimpleJsonResourceReloadListener {
 
     @Nullable
     public static RespawnableEntityData getRespawnableData(EntityType<?> entityType) {
-        ResourceLocation entityId = ForgeRegistries.ENTITY_TYPES.getKey(entityType);
+        ResourceLocation entityId = BuiltInRegistries.ENTITY_TYPE.getKey(entityType);
         return entityId == null ? null : getRespawnableData(entityId);
     }
 
